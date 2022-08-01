@@ -15,24 +15,10 @@
                 </span>
 
                 <ul class="colors colors--black">
-                    <li class="colors__item">
+                    <li class="colors__item" v-for="color in filterColor" :key="color.id">
                         <label class="colors__label">
-                            <input class="colors__radio sr-only" type="radio" name="color-1" value="#73B6EA" checked="">
-                            <span class="colors__value" style="background-color: #73B6EA;">
-                            </span>
-                        </label>
-                    </li>
-                    <li class="colors__item">
-                        <label class="colors__label">
-                            <input class="colors__radio sr-only" type="radio" name="color-1" value="#8BE000">
-                            <span class="colors__value" style="background-color: #8BE000;">
-                            </span>
-                        </label>
-                    </li>
-                    <li class="colors__item">
-                        <label class="colors__label">
-                            <input class="colors__radio sr-only" type="radio" name="color-1" value="#222">
-                            <span class="colors__value" style="background-color: #222;">
+                            <input class="colors__radio sr-only" type="radio"  value="#73B6EA" v-model="color.title">
+                            <span class="colors__value" :style="{'background-color': color.title}">
                             </span>
                         </label>
                     </li>
@@ -41,7 +27,28 @@
 </template>
 
 <script>
+    import colors from '../data/colors.js'
+
     export default{
-        props: ["product"]
+        props: ["product"],
+        data(){
+            return{
+                color: '#73B6EA'
+            }
+        },
+        computed:{
+            filterColor(){
+                let filterColor = []
+                this.product.colorId.forEach(element => {
+                    colors.forEach(item => {
+                        if (element === item.id){
+                            filterColor.push(item)
+                        }
+                    })
+                });
+
+                return filterColor
+            }
+        }
     }
 </script>
