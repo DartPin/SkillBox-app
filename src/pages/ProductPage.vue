@@ -3,18 +3,18 @@
         <div class="content__top">
             <ul class="breadcrumbs">
                 <li class="breadcrumbs__item">
-                    <a class="breadcrumbs__link" href="index.html">
+                    <router-link class="breadcrumbs__link" :to="{ name: 'main' }">
                         Каталог
-                    </a>
+                    </router-link>
                 </li>
                 <li class="breadcrumbs__item">
-                    <a class="breadcrumbs__link" href="#">
-                        Мобильный транспорт
-                    </a>
+                    <router-link class="breadcrumbs__link" :to="{ name: 'main' }">
+                        {{ category.title }}
+                    </router-link>
                 </li>
                 <li class="breadcrumbs__item">
                     <a class="breadcrumbs__link">
-                        Смартфон Xiaomi Mi Mix 3 6/128GB
+                        {{ product.title }}
                     </a>
                 </li>
             </ul>
@@ -23,46 +23,20 @@
         <section class="item">
             <div class="item__pics pics">
                 <div class="pics__wrapper">
-                    <img width="570" height="570" src="img/phone-square.jpg" srcset="img/phone-square@2x.jpg 2x"
-                        alt="Название товара">
+                    <img width="570" height="570" src="img/phone-square.jpg" :srcset="product.Image"
+                        :alt="product.title">
                 </div>
-                <ul class="pics__list">
-                    <li class="pics__item">
-                        <a href="" class="pics__link pics__link--current">
-                            <img width="98" height="98" src="img/phone-square-1.jpg"
-                                srcset="img/phone-square-1@2x.jpg 2x" alt="Название товара">
-                        </a>
-                    </li>
-                    <li class="pics__item">
-                        <a href="" class="pics__link">
-                            <img width="98" height="98" src="img/phone-square-2.jpg"
-                                srcset="img/phone-square-2@2x.jpg 2x" alt="Название товара">
-                        </a>
-                    </li>
-                    <li class="pics__item">
-                        <a href="" class="pics__link">
-                            <img width="98" height="98" src="img/phone-square-3.jpg"
-                                srcset="img/phone-square-3@2x.jpg 2x" alt="Название товара">
-                        </a>
-                    </li>
-                    <li class="pics__item">
-                        <a class="pics__link" href="#">
-                            <img width="98" height="98" src="img/phone-square-4.jpg"
-                                srcset="img/phone-square-4@2x.jpg 2x" alt="Название товара">
-                        </a>
-                    </li>
-                </ul>
             </div>
 
             <div class="item__info">
-                <span class="item__code">Артикул: 150030</span>
+                <span class="item__code">Артикул: {{ product.id }}</span>
                 <h2 class="item__title">
-                    Смартфон Xiaomi Mi Mix 3 6/128GB
+                    {{ product.title }}
                 </h2>
                 <div class="item__form">
-                    <form class="form" action="#" method="POST">
+                    <form class="form" action="#" method="POST" @submit.prevent="addToCart">
                         <b class="item__price">
-                            18 990 ₽
+                            {{ product.price | numberFormat }} ₽
                         </b>
 
                         <fieldset class="form__block">
@@ -125,24 +99,8 @@
                                 </li>
                             </ul>
                         </fieldset>
-
                         <div class="item__row">
-                            <div class="form__counter">
-                                <button type="button" aria-label="Убрать один товар">
-                                    <svg width="12" height="12" fill="currentColor">
-                                        <use xlink:href="#icon-minus"></use>
-                                    </svg>
-                                </button>
-
-                                <input type="text" value="1" name="count">
-
-                                <button type="button" aria-label="Добавить один товар">
-                                    <svg width="12" height="12" fill="currentColor">
-                                        <use xlink:href="#icon-plus"></use>
-                                    </svg>
-                                </button>
-                            </div>
-
+                            <ChangeCount v-model.number="productAmount"></ChangeCount>
                             <button class="button button--primery" type="submit">
                                 В корзину
                             </button>
@@ -218,7 +176,38 @@
 </template>
 
 <script>
-    export default{
-        props: ["pageParams"]
+import products from '@/data/products'
+import categories from '@/data/categories'
+import goToPage from '@/helpers/goToPage'
+import numberFormat from '@/helpers/numberFormat.js'
+import ChangeCount from '@/components/ChangeCount.vue'
+
+export default {
+    props: ["pageParams"],
+    data() {
+        return {
+            productAmount: 1
+        }
+    },
+    components: {
+        ChangeCount
+    },
+    filters: {
+        numberFormat
+    },
+    methods: {
+        goToPage,
+        addToCart() {
+            this.$store.commit('addProductToCart', { productId: this.product.id, amount: this.productAmount })
+        }
+    },
+    computed: {
+        product() {
+            return products.find(product => product.id === +this.$route.params.id)
+        },
+        category() {
+            return categories.find(category => category.id === this.product.categoryId)
+        }
     }
+}
 </script>
