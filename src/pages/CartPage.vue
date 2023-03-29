@@ -23,6 +23,7 @@
         </div>
 
         <section class="cart">
+            <div v-if="infoMessage != null">{{ infoMessage }}</div>
             <form class="cart__form form" action="#" method="POST">
                 <div class="cart__field">
                     <ul class="cart__list">
@@ -56,7 +57,10 @@ export default {
     filters: { numberFormat },
     components: { CartItem },
     computed: {
-        ...mapGetters({ products: 'cartDetailProducts', totalPrice: 'cartTotalPrice' }),
+        ...mapGetters({ products: 'cartDetailProducts', totalPrice: 'cartTotalPrice', infoMessage: 'returnInfoMessage' }),
+
+    },
+    watch: {
 
     }
 }

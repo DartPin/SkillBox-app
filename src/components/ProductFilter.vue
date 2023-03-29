@@ -20,7 +20,8 @@
                 <label class="form__label form__label--select">
                     <select class="form__select" type="text" name="category" v-model="currentCategoryId">
                         <option value="0">Все категории</option>
-                        <option v-for="category in categories" :key="category.id" :value="category.id">{{category.title}}</option>
+                        <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.title }}
+                        </option>
                     </select>
                 </label>
             </fieldset>
@@ -30,8 +31,9 @@
                 <ul class="colors">
                     <li class="colors__item" v-for="color in colors" :key="color.id">
                         <label class="colors__label">
-                            <input class="colors__radio sr-only" type="radio" name="color" :value="color.id" checked="" v-model="currentColorId">
-                            <span class="colors__value" :style="{'background-color': color.title}">
+                            <input class="colors__radio sr-only" type="radio" name="color" :value="color.id" checked=""
+                                v-model="currentColorId">
+                            <span class="colors__value" :style="{ 'background-color': color.code }">
                             </span>
                         </label>
                     </li>
@@ -109,54 +111,66 @@
 </template>    
 
 <script>
-    import categories from "../data/categories.js"
-    import colors from "../data/colors.js"
+import axios from "axios"
+import { API_BASE_URL } from "@/config"
 
-    export default{
-        props: ["priceFrom", "priceTo", "categoryId", "colorId"],
-        data(){
-            return{
-                currentPriceFrom: 0,
-                currentPriceTo: 0,
-                currentCategoryId: 0,
-                currentColorId: 0,
-            }
-        },
-        watch:{
-            priceFrom(value){
-                this.currentPriceFrom = value
-            },
-            priceTo(value){
-                this.currentPriceTo = value
-            },
-            categoryId(value){
-                this.currentCategoryId = value
-            },
-            colorId(value){
-                this.currentColorId = value
-            }
-        },
-        methods:{
-            submit(){
-                this.$emit('update:priceFrom', this.currentPriceFrom)
-                this.$emit('update:priceTo', this.currentPriceTo)
-                this.$emit('update:categoryId', this.currentCategoryId)
-                this.$emit('update:colorId', this.currentColorId)
-            },
-            reset(){
-                this.$emit('update:priceFrom', 0)
-                this.$emit('update:priceTo', 0)
-                this.$emit('update:categoryId', 0)
-                this.$emit('update:colorId', 0)
-            }
-        },
-        computed:{
-            categories(){
-                return categories;
-            },
-            colors(){
-                return colors
-            }
+export default {
+    props: ["priceFrom", "priceTo", "categoryId", "colorId"],
+    data() {
+        return {
+            currentPriceFrom: 0,
+            currentPriceTo: 0,
+            currentCategoryId: 0,
+            currentColorId: 0,
+            categoriesData: null,
+            colorsData: null
         }
+    },
+    watch: {
+        priceFrom(value) {
+            this.currentPriceFrom = value
+        },
+        priceTo(value) {
+            this.currentPriceTo = value
+        },
+        categoryId(value) {
+            this.currentCategoryId = value
+        },
+        colorId(value) {
+            this.currentColorId = value
+        }
+    },
+    methods: {
+        loadCategories() {
+            axios.get(API_BASE_URL + "/api/productCategories").then(response => this.categoriesData = response.data).catch(error => console.log(error))
+        },
+        loadColors() {
+            axios.get(API_BASE_URL + "/api/colors").then(response => this.colorsData = response.data).catch(error => console.log(error))
+        },
+        submit() {
+            this.$emit('update:priceFrom', this.currentPriceFrom)
+            this.$emit('update:priceTo', this.currentPriceTo)
+            this.$emit('update:categoryId', this.currentCategoryId)
+            this.$emit('update:colorId', this.currentColorId)
+        },
+        reset() {
+            this.$emit('update:priceFrom', 0)
+            this.$emit('update:priceTo', 0)
+            this.$emit('update:categoryId', 0)
+            this.$emit('update:colorId', 0)
+        }
+    },
+    computed: {
+        categories() {
+            return this.categoriesData ? this.categoriesData.items : [];
+        },
+        colors() {
+            return this.colorsData ? this.colorsData.items : [];
+        }
+    },
+    mounted() {
+        this.loadCategories()
+        this.loadColors()
     }
+}
 </script>

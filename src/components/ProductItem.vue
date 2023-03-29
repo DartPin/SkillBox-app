@@ -1,7 +1,8 @@
 <template>
     <li class="catalog__item">
+
         <router-link class="catalog__pic" :to="{ name: 'product', params: { id: product.id } }">
-            <img :src="product.Image" alt="Название товара">
+            <img :src="product.image" alt="Название товара">
         </router-link>
 
         <h3 class="catalog__title">
@@ -23,6 +24,7 @@
                 </label>
             </li>
         </ul>
+
     </li>
 </template>
 
@@ -47,9 +49,9 @@ export default {
     computed: {
         filterColor() {
             let filterColor = []
-            this.product.colorId.forEach(element => {
+            this.product.colors.forEach(element => {
                 colors.forEach(item => {
-                    if (element === item.id) {
+                    if (element.id === item.id) {
                         filterColor.push(item)
                     }
                 })
