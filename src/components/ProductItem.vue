@@ -16,10 +16,10 @@
         </span>
 
         <ul class="colors colors--black">
-            <li class="colors__item" v-for="color in filterColor" :key="color.id">
+            <li class="colors__item" v-for="color in product.colors" :key="color.id">
                 <label class="colors__label">
                     <input class="colors__radio sr-only" type="radio" value="#73B6EA" v-model="color.title">
-                    <span class="colors__value" :style="{ 'background-color': color.title }">
+                    <span class="colors__value" :style="{ 'background-color': color.code }">
                     </span>
                 </label>
             </li>
